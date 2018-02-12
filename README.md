@@ -1,13 +1,14 @@
 # drameBOX
-The Drame band audio loop-player with midiclock output
+The Drame band audio loop-player with midi-clock output
       
-   For Teensy 3.5 ( and 3.6 but not yet tested ).
+   For Teensy 3.5 ( and 3.6 but not yet tested ) with teensyduino.
    
    Use of a modified non standard audio lib.
    
    **THAT's IMPORTANT**: "play_sd_raw.h" and "play_sd_raw.cpp" in the teensy 
    audio lib, **must** be replaced by modified versions for this use.
    Rename the originals and copy modified ones.
+   find them in *.../arduino-1.x.x/hardware/teensy/avr/libraries/Audio*
    
    ### PURPOSE:
    Play and loop a sample file from SDcard and send midiclock. 
