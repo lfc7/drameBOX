@@ -13,28 +13,31 @@
    
    ### PURPOSE:
    Play and loop a sample file from SDcard and send midiclock. 
-   midiclock is generated using the lenght of the sample
+   
+   Midiclock is generated using the lenght of the sample
    and the filename informations of total nb of measure (bar) 
    and nb of quarter note by measure.
    
    ### FILENAME CONVENTION:
-   filename must follow this scheme: N_MM_QQ.raw 
+   Filename must follow this scheme: N_MM_QQ.raw 
    where N is the number of the preset (1 to 8), 
    MM (01 to 99) is the nb of measure (bar) in the sample,
    QQ (01 to 99) number of quarter note by mesure.
    (dont forget zero's for 01 to 09 !!!)
    
    ### FILE TYPE
-   audio file must be raw audio PCM signed 16 bits
+   Audio file must be raw audio PCM signed 16 bits
    
    SD card must have good tranfert speed to avoid
    hangs in audio (and clock).
    SDHC seems good for that.
    
    ### INPUT/OUTPUTs
-   midi in receive control functions (by note or control change)
-   midi out send midiclock
-   audio out (mono dacs1)
+   midi-in receive control functions (by note or control change)
+   
+   midi-out send midiclock
+   
+   audio-out (mono dacs1)
    
    ### ON BOARD CONTROLS
    -selector: select the sample to be played (1-8)
@@ -59,13 +62,17 @@
    ### SETTINGS @ boot
    -choose number of ticks by quarter note
    
-   selector position determine the number
+   Selector position determine the number
    of ticks adding 8 ticks by position
    (example: position 3 -> 24 ticks)
-   before power on, place selector on the choosen
+   
+   **Before** power on, place selector on the choosen
    number of ticks.
-   At power on, hold start button, that's done!
-   setting is saved in EEPROM.
+   
+   Hold start button.
+   
+   Power ON, that's done!
+   Setting is saved in EEPROM.
    
    ### NOTE
    to use with usb-midi uncomment all "//usbMIDI ..."
