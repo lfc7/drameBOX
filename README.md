@@ -38,7 +38,7 @@
    ### INPUT/OUTPUTs
    midi-in receive control functions (by note or control change)
    
-   midi-out send midiclock
+   midi-out send midiclock, start and stop.
    
    audio-out (mono dacs1)
    
