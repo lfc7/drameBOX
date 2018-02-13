@@ -3,7 +3,7 @@
       
    For Teensy 3.5 ( and 3.6 but not yet tested ) with teensyduino.
    
-   Use of a modified non standard audio lib.
+   Use of a modified version of the standard Teensy audio lib.
    
    **THAT's IMPORTANT**: "play_sd_raw.h" and "play_sd_raw.cpp" in the teensy 
    audio lib, **must** be replaced by modified versions for this use.
