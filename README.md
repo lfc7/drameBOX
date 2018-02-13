@@ -8,8 +8,11 @@
    **THAT's IMPORTANT**: "play_sd_raw.h" and "play_sd_raw.cpp" in the teensy 
    audio lib, **must** be replaced by modified versions for this use.
    
-   Find them in *.../arduino-1.x.x/hardware/teensy/avr/libraries/Audio*
-   Rename the originals and copy modified ones.
+   Copy teensy "Audio" folder in your personal arduino libraries folder
+   
+   Teensy Audio lib can be found at *.../arduino-1.x.x/hardware/teensy/avr/libraries/Audio*
+   
+   Rename the originals play_sd_raw.ccp and .h and copy modified ones.
    
    ### PURPOSE:
    Play and loop a sample file from SDcard and send midiclock. 
