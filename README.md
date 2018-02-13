@@ -48,7 +48,7 @@
    will be play right at the end, then midiclock change 
    accordingly.
    
-   -start/stop button: start playing sample at start 
+   -start/stop button: start playing sample at start,  
    stop do it, but midiclock continue in free wheeling mode.
    
    ### MIDI CONTROLS
