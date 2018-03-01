@@ -72,10 +72,12 @@
    **Before** power on, place selector on the choosen
    number of ticks.
    
-   Hold start button.
+   Press start button. Keep Press.
    
-   Power ON, that's done!
-   Setting is saved in EEPROM.
+   Power ON, wait for leds until setting is saved in EEPROM.
+   
+   Release start button
+   
    
    ### NOTE
    to use with usb-midi uncomment all "//usbMIDI ..."
