@@ -29,9 +29,9 @@
    (dont forget zero's for 01 to 09 !!!)
    
    ### FILE TYPE
-   Audio file must be raw audio PCM signed 16 bits
+   Audio file must be "raw audio": signed-16bits PCM little-endian mono 44100Hz
    
-   SD card must have good tranfert speed to avoid
+   SD card must have good tranfert-speed to avoid
    hangs in audio (and clock).
    SDHC seems good for that.
    
