@@ -3,7 +3,7 @@
       
    For Teensy 3.5 ( and 3.6 but not yet tested ) with teensyduino.
    
-   Use of a modified version of the standard Teensy audio lib.
+   !!! Use of a modified version of the standard Teensy audio lib. !!!
    
    **THAT's IMPORTANT**: "play_sd_raw.h" and "play_sd_raw.cpp" in the teensy 
    audio lib, **must** be replaced by modified versions for this use.
@@ -20,6 +20,11 @@
    Midiclock is generated using the lenght of the sample
    and the filename informations of total nb of measure (bar) 
    and nb of quarter note by measure.
+   
+   ### SCHEMATIC:
+   Schematic can be found in [export](export/drameBOX_sch.pdf)
+   
+   It may contains errors as it was made afterward.
    
    ### FILENAME CONVENTION:
    Filename must follow this scheme: N_MM_QQ.raw 
