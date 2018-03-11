@@ -1,81 +1,77 @@
 /*******************************************************************
- *            DRAME BOX
- *            
- *  for teensy 3.5 ( and 3.6 but not tested )
- *  use modified non standard audio lib
- *  THAT's IMPORTANT "play_sd_raw.h" and "play_sd_raw.cpp" in audio lib
- *  are modified versions for this use.
- *  rename the originals and copy modified ones.
- *  
- *  PURPOSE:
- *  Play and loop a sample file from SDcard and send midiclock. 
- *  midiclock is generated using the lenght of the sample
- *  and the filename informations of total nb of measure (bar) 
- *  and nb of quarter note by measure.
- *  
- *  FILENAME CONVENTION:
- *  filename must follow this scheme: N_MM_QQ.raw 
- *  where N is the number of the preset (1 to 8), 
- *  MM (01 to 99) is the nb of measure (bar) in the sample,
- *  QQ (01 to 99) number of quarter note by mesure.
- *  (dont forget zero's for 01 to 09 !!!)
- *  
- *  FILE TYPE
- *  audio file must be raw audio PCM signed 16 bits
- *  
- *  SD card must have good tranfert speed to avoid
- *  hangs in audio (and clock).
- *  SDHC seems good for that.
- *  
- *  INPUT/OUTPUTs
- *  midi in receive control functions (by note or control change)
- *  midi out send midiclock
- *  audio out (mono dacs1)
- *  
- *  ON BOARD CONTROLS
- *  selector: select the sample to be played (1-8)
- *  if a sample is already playing, the selected one 
- *  will be play right at the end, then midiclock change 
- *  accordingly.
- *  
- *  start/stop button: start playing sample at start 
- *  stop do it, but midiclock continue in free wheeling mode.
- *  
- *  MIDI CONTROLS
- *  previous: select the previous sample to be played at start or when 
- *  an already running sample reach end.
- *  
- *  next: select the next sample to be played at start or when 
- *  an already running sample reach end.
- *  
- *  start/stop: guess what, it start or stop playing the sample
- *  
- *  mute: mute the playing sample
- *  
- *  SETTINGS @ boot
- *  choose number of ticks by quarter note
- *  
- *  selector position determine the number
- *  of ticks adding 8 ticks by position
- *  (example: position 3 -> 24 ticks)
- *  before power on, place selector on the choosen
- *  number of ticks.
- *  At power on, hold start button, that's done!
- *  setting is saved in EEPROM.
- *  
- *  NOTE
- *  to use with usb-midi uncomment all "//usbMIDI ..."
- *  and compile with the teensy midi usb handler option
- * *******************************************************************
- 
-   ____     __          ______              _       ____ ___  ___  ___ 
+ The Drame band audio loop-player with midi-clock output
+For Teensy 3.5 ( and 3.6 but not yet tested ) with teensyduino.
+
+Use of a modified version of the standard Teensy audio lib.
+
+THAT's IMPORTANT: "play_sd_raw.h" and "play_sd_raw.cpp" in the teensy audio lib, must be replaced by modified versions for this use.
+
+Copy teensy "Audio" folder in your personal arduino libraries folder
+
+Teensy Audio lib can be found at .../arduino-1.x.x/hardware/teensy/avr/libraries/Audio
+
+Rename the originals play_sd_raw.ccp and .h and copy modified ones.
+
+PURPOSE:
+Play and loop a sample file from SDcard and send midiclock.
+
+Midiclock is generated using the lenght of the sample and the filename informations of total nb of measure (bar) and nb of quarter note by measure.
+
+FILENAME CONVENTION:
+Filename must follow this scheme: N_MM_QQ.raw where N is the number of the preset (1 to 8), MM (01 to 99) is the nb of measure (bar) in the sample, QQ (01 to 99) number of quarter note by mesure. (dont forget zero's for 01 to 09 !!!)
+
+FILE TYPE
+Audio file must be "raw audio": signed-16bits PCM little-endian mono 44100Hz
+
+SD card must have good tranfert-speed to avoid hangs in audio (and clock). SDHC seems good for that.
+
+INPUT/OUTPUTs
+midi-in receive control functions (by note or control change)
+
+midi-out send midiclock, start and stop.
+
+audio-out (mono dacs1)
+
+ON BOARD CONTROLS
+-selector: select the sample to be played (1-8) if a sample is already playing, the selected one will be play right at the end, then midiclock change accordingly.
+
+-start/stop button: start playing sample at start,
+stop do it, but midiclock continue in free wheeling mode.
+
+MIDI CONTROLS
+-previous: select the previous sample to be played at start or when an already running sample reach end.
+
+-next: select the next sample to be played at start or when an already running sample reach end.
+
+-start/stop: guess what, it start or stop playing the sample
+
+-mute: mute the playing sample
+
+SETTINGS @ boot
+-choose number of ticks by quarter note
+
+Selector position determine the number of ticks adding 8 ticks by position (example: position 3 -> 24 ticks)
+
+Before power on, place selector on the choosen number of ticks.
+
+Press start button. Keep Press.
+
+Power ON, wait for leds until setting is saved in EEPROM.
+
+Release start button
+
+NOTE
+to use with usb-midi uncomment all "//usbMIDI ..." and compile with the teensy midi usb handler option
+
+   ____     __          ______              _       ____ ___  ___  ___
   / __/_ __/ /___ _____/_  __/______  ___  (_)___  |_  // _ \/ _ \/ _ \
  / _// // / __/ // / __// / / __/ _ \/ _ \/ / __/ _/_ </ // / // / // /
 /_/  \_,_/\__/\_,_/_/  /_/ /_/  \___/_//_/_/\__/ /____/\___/\___/\___/ 
                                                                        
 with love, for DRAME.
- * *******************************************************************
  */
+
+#include <SD.h>
 #include <MIDI.h>
 #include <midi_Defs.h>
 
@@ -97,16 +93,16 @@ AudioConnection          patchCord2(mixer1, 0, dacs1, 0);
 /* MIDI SETTINGS */
 #define MIDI_CHAN     MIDI_CHANNEL_OMNI //listen to all channels
 
-#define MIDI_PREV_NOTE 0x01 //  increment audio file
-#define MIDI_NEXT_NOTE 0x02 //  decrement audio file
-#define MIDI_START_NOTE 0x03 // start/stop
-#define MIDI_MUTE_NOTE 0x04 //  mute/unmute 
+#define MIDI_PREV_NOTE 0x01 //increment audio file
+#define MIDI_NEXT_NOTE 0x02 //decrement audio file
+#define MIDI_START_NOTE 0x03 //start/stop
+#define MIDI_MUTE_NOTE 0x04 // mute/unmute 
 
-#define MIDI_VOLUME_CC 0x07 //  audio level
-#define MIDI_START_CC 0x45  //  start/stop
-#define MIDI_NEXT_CC 0x46 //    decrement audio file
-#define MIDI_PREV_CC 0x47 //    increment audio file
-#define MIDI_MUTE_CC 0x48 //    mute/unmute 
+#define MIDI_VOLUME_CC 0x07 //audio level
+#define MIDI_START_CC 0x45  //start/stop
+#define MIDI_NEXT_CC 0x46 //decrement audio file
+#define MIDI_PREV_CC 0x47 //increment audio file
+#define MIDI_MUTE_CC 0x48 // mute unmute 
 
 /* HARDWARE SETTINGS */
 #define FILE_SELECTOR A0
@@ -137,8 +133,7 @@ char   audioFile_filename[8][13];
 double audioFile_tickevery[8] = {0}; //in micros
 double audioFile_totaltime[8];
 
-
-uint8_t tickDivision = 24;
+uint8_t tickDivision = 24; 
 
 double tickevery;
 double totaltime; 
@@ -147,18 +142,20 @@ uint32_t nextTickMicros = 0;
 uint8_t tickCounter = 0;
 
 int fileSelector = 0;
+int hwSelector = 0;
 int actualPlaying = 0;
 int audioVolume = 0;
 bool flag_stop = false;
 bool mute_flag = false;
+bool loop_remember=false;
 
-uint8_t leds[8] = { LED1, LED2, LED3, LED4, LED5, LED6, LED7, LED8 };
+uint8_t leds[8] = { LED8, LED7, LED6, LED5, LED4, LED3, LED2, LED1 };
 
 
 //ROUTINES *******************************************************
 
 //init sd and get needed files if exist
-//return true on success (ie: at least one correctly named file was found on sdcard)
+//return true on success (at least one correctly named file was found on sdcard)
 bool getFilesNeeded()
 {
   bool files_OK = false;
@@ -187,7 +184,8 @@ bool getFilesNeeded()
       //files must be on root directory
       continue;
     } else {
-      // here it found a file
+      // file
+
       //copy filename
       char filefound[13] = {0};
       size_t destination_size = sizeof (filefound);
@@ -223,12 +221,11 @@ bool getFilesNeeded()
             uint32_t audiofilesize = entry.size();
             //44.11764706B * 2 /ms so:
             audioFile_totaltime[filenumber] = ( audiofilesize * 1000.0 ) / (  44.11764706 * 2.0 ); //in  uS ... should give a 1ms precision? //220.5882353
-            //n ticks by quarter note so:
+            //24 ticks by quarter note so:
             uint32_t TotalOfTicks = uint32_t(mesure) * uint32_t(quarter) * uint32_t(tickDivider);//24UL;
             audioFile_tickevery[filenumber] = audioFile_totaltime[filenumber] / double(TotalOfTicks);
             
             //debug
-            /*
             Serial.print("filename:");
             Serial.println(filefound);
             Serial.print("totalTime:");
@@ -242,12 +239,10 @@ bool getFilesNeeded()
             Serial.print("tickevery:");
             Serial.println(audioFile_tickevery[filenumber]);
             Serial.println("--------------------------------");
-            */
           }
         }
       }
       // here we've got a file but it is not named as it should
-      //so do nothing
     }
     entry.close();
   }
@@ -257,26 +252,37 @@ bool getFilesNeeded()
 
 }
 
-//select with hardware selector the next file to be played 
+//select with hw selector the next file to be played 
 void rotSelectFile()
 {
   ///**
-  int selector = analogRead(FILE_SELECTOR) >> 7;
-  if ( selector != fileSelector )
+  int selector = (1023 - analogRead(FILE_SELECTOR)) >> 7;
+  
+  if( selector != hwSelector )
   {
-    if (audioFile_filename[selector][0] != 0)
+    
+    hwSelector = selector;
+    
+    if ( selector != fileSelector )
     {
-      fileSelector = selector;
-      if ( playSdRaw1.isPlaying() )
+      if (audioFile_filename[selector][0] != 0)
       {
-        playSdRaw1.playNextAtEnd(audioFile_filename[selector]);
+        fileSelector = selector;
         ledAllOFF();
-       // ledON(actualPlaying);
-        ledON(selector);
+         // ledON(actualPlaying);
+          ledON(selector);
+        if ( playSdRaw1.isPlaying() )
+        {
+          playSdRaw1.playNextAtEnd(audioFile_filename[selector]);
+          ledAllOFF();
+         // ledON(actualPlaying);
+          ledON(selector);
+        }
+  
       }
-
     }
   }
+  
   //**/
   //fileSelector = 0;
 }
@@ -296,9 +302,17 @@ void midiSelectFile(bool inc)
 
   if (audioFile_filename[selector][0] != 0)
   {
-    playSdRaw1.playNextAtEnd(audioFile_filename[selector]);
     fileSelector = selector;
+    ledAllOFF();
+    // ledON(actualPlaying);
     ledON(selector);
+    if ( playSdRaw1.isPlaying() )
+        {
+          playSdRaw1.playNextAtEnd(audioFile_filename[selector]);
+          
+        }
+    
+   
   }
 
 }
@@ -321,8 +335,9 @@ void startStop()
   flag_stop = !flag_stop;
   if ( flag_stop ) {
     playSdRaw1.stop();
-    midiStop();
+    
     ledAllOFF();
+    ledON(fileSelector);
   } else {
     playSdRaw1.play(audioFile_filename[fileSelector]);
     playSdRaw1.loop(true);
@@ -334,6 +349,7 @@ void startStop()
     ticksElapsed = micros();
     nextTickMicros = tickevery;
     actualPlaying=fileSelector;
+    loop_remember=false;
     ledAllOFF();
     ledON(fileSelector);
   }
@@ -341,7 +357,7 @@ void startStop()
 
 void handleNoteOn(byte channel, byte pitch, byte velocity)
 {
-
+   
    switch (pitch) {
     case  MIDI_START_NOTE: //START
       startStop();
@@ -376,6 +392,7 @@ void handleNoteOff(byte channel, byte pitch, byte velocity)
 
 void handleControlChange(byte channel, byte number, byte value)
 {
+    Serial.println(number,DEC);
     switch (number) {
     case  MIDI_START_CC: //START
       startStop();
@@ -415,12 +432,18 @@ void midiTick()
   if (tickCounter == 0)
   {
     digitalWriteFast( SYNC_OUTPUT , true );
+    if(loop_remember)ledAllON();
     ledON(actualPlaying);
   }
 
   if (tickCounter == 3)
   {
     digitalWriteFast( SYNC_OUTPUT , false );
+    if(loop_remember)
+    {
+      ledAllOFF();
+      loop_remember=false;
+    }
    ledOFF(actualPlaying);
     
   }
@@ -440,13 +463,6 @@ void midiStart()
   
   //usbMIDI.send_now();
   tickCounter = 0;
-}
-
-void midiStop()
-{
-  MIDI.sendRealTime( Stop );
-  //usbMIDI.sendRealTime( Stop );
- 
 }
 
 void ledON(int lednb)
@@ -492,6 +508,7 @@ void setup()
   AudioMemory(10);
 
   //init I/O
+ // pinMode( 0, INPUT_PULLUP);
   
   //init 1 buttons (start/stop)
   pinMode( START_BUTT, INPUT_PULLUP);
@@ -507,7 +524,7 @@ void setup()
   }
 
   //init 2 ADC ( file selector (8 values) and mute (in fact volume) (also midi 127 values)
-  fileSelector = analogRead(FILE_SELECTOR) >> 7;
+  fileSelector = (1023 - analogRead(FILE_SELECTOR)) >> 7;
   audioVolume = analogRead(VOLUME) >> 3; // not in use HARDWARE TODO
 
   delay(100);
@@ -535,8 +552,13 @@ void setup()
   MIDI.setHandleControlChange(handleControlChange);
   //usbMIDI.setHandleControlChange(handleControlChange);
 
+  MIDI.turnThruOff();
+
   // Initiate MIDI communications, 
-  MIDI.begin(MIDI_CHAN);
+  MIDI.begin(MIDI_CHAN); //listen to all
+
+  //debug
+  Serial.println("debug");
 
 
   //init some var
@@ -564,6 +586,8 @@ void loop()
       nextTickMicros = audioFile_tickevery[fileSelector];
       tickCounter = 0;
       actualPlaying=fileSelector;
+      loop_remember=true;
+      ledAllON();
       ledAllOFF();
       //ledON(fileSelector);
     }
