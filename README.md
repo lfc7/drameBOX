@@ -1,4 +1,7 @@
 # drameBOX
+
+![taptempo_photo](/export/drameBoxx.jpg)
+
 ## The Drame band audio loop-player with midi-clock output
       
    For Teensy 3.5 ( and 3.6 but not yet tested ) with teensyduino.
